@@ -1,24 +1,29 @@
 import {Array1D, Array2D, ENV, Graph, Scalar, Session, Tensor, NDArray, InCPUMemoryShuffledInputProviderBuilder, SGDOptimizer, CostReduction} from 'deeplearn'
 
+// n階テンソルの定義
 const a = Scalar.new(4)
 const b = Array1D.new([2, 3])
-const c = Array2D.new([3, 2], [[1, 2], [3, 4], [5, 6]])
+const c = Array2D.new([3, 2], [1, 2, 3, 4, 5, 6])
 
 async function calc() {
   const math = ENV.math
 
+  // データの出力
   console.log(await a.data())// Float32Array [4]
   console.log(await b.data())// Float32Array(2) [2, 3]
   console.log(await c.data())// Float32Array(6) [1, 2, 3, 4, 5, 6]
 
+  // スカラーとテンソルの足し算
   const d = math.add(a, b)
   const e = math.add(a, c)
   console.log(await d.data())// Float32Array(2) [6, 7]
   console.log(await e.data())// Float32Array(6) [5, 6, 7, 8, 9, 10]
 
+  // テンソル同士の足し算
   const f = math.add(c, b)
   console.log(await f.data())// Float32Array(6) [3, 5, 5, 7, 7, 9]
 
+  // テンソル同士の掛け算
   const g = math.multiply(b, a)
   const h = math.multiply(c, a)
   const i = math.multiply(c, b)
@@ -27,8 +32,9 @@ async function calc() {
   console.log(await h.data())// Float32Array(6) [4, 8, 12, 16, 20, 24]
   console.log(await i.data())// Float32Array(6) [2, 6, 6, 12, 10, 18]
 
+  // テンソル同士の積
   const j = math.matrixTimesVector(c, b)
-  console.log(await j.data())// 
+  console.log(await j.data())// Float32Array(3) [8, 18, 28]
 }
 
 calc()

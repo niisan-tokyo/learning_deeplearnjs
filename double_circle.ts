@@ -33,18 +33,18 @@ async function DoubleCircle() {
 
   const x0: Tensor = graph.placeholder('input', [input_dim])
 
-  const a1: Tensor = graph.variable('a1', Array2D.randNormal([32, input_dim]))
-  const b1: Tensor = graph.variable('b1', Array1D.zeros([32]))
+  const a1: Tensor = graph.variable('a1', Array2D.randNormal([64, input_dim]))
+  const b1: Tensor = graph.variable('b1', Array1D.zeros([64]))
   const y1: Tensor = graph.matmul(a1, x0)
   const x1: Tensor = graph.relu(graph.add(y1, b1))
 
-  const a2: Tensor = graph.variable('a2', Array2D.randNormal([64, 32]))
-  const b2: Tensor = graph.variable('b2', Array1D.zeros([64]))
+  const a2: Tensor = graph.variable('a2', Array2D.randNormal([128, 64]))
+  const b2: Tensor = graph.variable('b2', Array1D.zeros([128]))
   const y2: Tensor = graph.matmul(a2, x1)
   const x2: Tensor = graph.tanh(graph.add(y2, b2))
 
-  const a3: Tensor = graph.variable('a3', Array2D.randNormal([label_dim, 64]))
-  const b3: Tensor = graph.variable('b3', Array1D.zeros([2]))
+  const a3: Tensor = graph.variable('a3', Array2D.randNormal([label_dim, 128]))
+  const b3: Tensor = graph.variable('b3', Array1D.zeros([label_dim]))
   const y3: Tensor = graph.matmul(a3, x2)
 
   const x4: Tensor = graph.softmax(graph.add(y3, b3))
@@ -58,12 +58,16 @@ async function DoubleCircle() {
     const shuffledInputProviderBuilder = new InCPUMemoryShuffledInputProviderBuilder([inputs, labels])
     const [xProvider, yProvider] = shuffledInputProviderBuilder.getInputProviders()
 
-    const NUM_BATCHES = 10001
+    const NUM_BATCHES = 12001
     const BATCH_SIZE = 128
+
+    // Learning Parameter
     const LEARNING_RATE = 0.01
+    const BETA_1        = 0.9
+    const BETA_2        = 0.999
 
     //const optimizer = new SGDOptimizer(LEARNING_RATE)
-    const optimizer = new AdamOptimizer(LEARNING_RATE, 0.9, 0.999)
+    const optimizer = new AdamOptimizer(LEARNING_RATE, BETA_1, BETA_2)
 
     for (let i = 0; i < NUM_BATCHES; i++) {
       const costValue = session.train(

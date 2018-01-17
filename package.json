@@ -15,8 +15,8 @@
   },
   "scripts": {
     "prep": "yarn && mkdirp dist",
-    "watch": "watchify double_circle.ts -p [tsify] -v --debug -o dist/bundle.js --poll",
-    "build": "browserify main.ts -p [tsify] -o dist/bundle.js",
+    "watch": "watchify calc.ts -p [tsify] -v --debug -o dist/bundle.js --poll",
+    "build": "browserify double_circle.ts -p [tsify] -o dist/bundle.js",
     "lint": "tslint -p . -t verbose",
     "deploy": "yarn build && uglifyjs dist/bundle.js -c -m -o dist/bundle.min.js"
   },
