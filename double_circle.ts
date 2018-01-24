@@ -2,6 +2,8 @@ import {Array1D, Array2D, ENV, Graph, Scalar, Session, Tensor, NDArray, InCPUMem
 
 async function DoubleCircle() {
   const graph = new Graph()
+
+  // 学習用のデータセットを作成
   const inputs: Array1D[] = []
   const labels: Array1D[] = []
   const indexes = Array(200).fill(0).map((v,i) => i - 99)
@@ -22,15 +24,12 @@ async function DoubleCircle() {
     }
   }
 
-  //console.log(inputs)
-  //console.log(labels)
-  //console.log(await inputs[0].data())
-
   const math = ENV.math
 
   const input_dim = 2
   const label_dim = 2
 
+  // 計算用の多層パーセプトロンを生成
   const x0: Tensor = graph.placeholder('input', [input_dim])
 
   const a1: Tensor = graph.variable('a1', Array2D.randNormal([64, input_dim]))
@@ -54,6 +53,7 @@ async function DoubleCircle() {
 
   const session = new Session(graph, math)
 
+  // ここから学習の設定及び実行
   await math.scope(async () => {
     const shuffledInputProviderBuilder = new InCPUMemoryShuffledInputProviderBuilder([inputs, labels])
     const [xProvider, yProvider] = shuffledInputProviderBuilder.getInputProviders()
@@ -69,6 +69,8 @@ async function DoubleCircle() {
     //const optimizer = new SGDOptimizer(LEARNING_RATE)
     const optimizer = new AdamOptimizer(LEARNING_RATE, BETA_1, BETA_2)
 
+    // 学習開始
+    // BATCH_SIZE != データ数なので、NUM_BATCHES がいわゆるepoch数とは違うことに注意
     for (let i = 0; i < NUM_BATCHES; i++) {
       const costValue = session.train(
         cost,
@@ -82,6 +84,7 @@ async function DoubleCircle() {
       }
     }
 
+    // 学習が完了したら、canvasで領域を図示する
     const canvas = document.getElementById('plot_area')
     console.log(canvas)
     drawLine(canvas, [
@@ -93,6 +96,7 @@ async function DoubleCircle() {
       {xi: 0, yi: 300, xf: 400, yf: 300},
     ])
 
+    // 学習済みのモデルに適当な座標を読み込ませて、領域内だと判断したら、プロットする
     for (let i = 0; i < 40; i++) {
       const circles = []
       for (let j = 0; j < 40; j++) {

@@ -83,7 +83,7 @@ async function mlBeginners() {
       // 学習を実施
       for (let i = 0; i < NUM_BATCHES; i++) {
         const costValue = session.train(cost, [{tensor: x, data: xProvider}, {tensor: yLabel, data: yProvider}], BATCH_SIZE, optimizer, CostReduction.MEAN)
-        console.log(`average const: ${costValue.get()}`)
+        console.log(`average cost: ${costValue.get()}`)
       }
 
       result = session.eval(y, [{tensor: x, data: Scalar.new(4)}])
