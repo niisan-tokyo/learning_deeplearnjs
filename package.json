@@ -16,9 +16,10 @@
   "scripts": {
     "prep": "yarn && mkdirp dist",
     "watch": "watchify calc.ts -p [tsify] -v --debug -o dist/bundle.js --poll",
-    "build": "browserify double_circle.ts -p [tsify] -o dist/bundle.js",
+    "build": "browserify begginers.ts -p [tsify] -o dist/bundle.js",
     "lint": "tslint -p . -t verbose",
-    "deploy": "yarn build && uglifyjs dist/bundle.js -c -m -o dist/bundle.min.js"
+    "deploy": "yarn build && uglifyjs dist/bundle.js -c -m -o dist/bundle.min.js",
+    "circle": "browserify double_circle2.ts -p [tsify] -o dist/circle.js"
   },
-  "license": "Apache-2.0"
+  "license": "MIT"
 }
